@@ -48,5 +48,13 @@ Ensure you have the following installed on your system:
    yarn install
    ```
 
-3. Open view in browser
+3. Run project:
+
+   ```bash
+   npm run dev
+   # or
+   yarn run dev
+   ```
+
+4. Open view in browser
    view at http://localhost:5173
