@@ -62,7 +62,6 @@ export const TableData = ({ row, index }: TableDataProps) => {
         <TableCell component="th" scope="row">
           {index + 1}
         </TableCell>
-
         <TableCell component="th" scope="row">
           <Chip label={row.spot} color="secondary" />
         </TableCell>
@@ -106,6 +105,9 @@ export const TableData = ({ row, index }: TableDataProps) => {
             <Box sx={{ marginBottom: 2 }}>
               <Typography fontSize={18} variant="h6">
                 <strong>Name:</strong> {row.name}
+              </Typography>
+              <Typography fontSize={18} variant="h6">
+                <strong>Police Number:</strong> {row.policeNumber}
               </Typography>
               <Typography fontSize={18} variant="h6">
                 <strong>Duration:</strong> {row.duration} Hour(s)

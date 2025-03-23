@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { useContext, useState } from 'react';
 import useStorage from '../hooks/useStorage';
 import { AppContext } from '../App';
@@ -13,14 +13,10 @@ import Paper from '@mui/material/Paper';
 import { TableData } from './TableData';
 
 export default function ListOrder() {
-  const { setMsg } = useContext(AppContext);
   const storage = useStorage();
-
-  const [selected, setSelected] = useState('');
 
   const orders = storage.getOrders();
 
-  console.log(orders);
   return (
     <Stack mt={2} spacing={2}>
       <TableContainer component={Paper}>
@@ -35,8 +31,17 @@ export default function ListOrder() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {orders.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  <Typography variant="h6" color="textSecondary">
+                    No orders available yet
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
             {orders.map((row, index) => (
-              <TableData row={row} index={index} />
+              <TableData row={row} index={index} key={index} />
             ))}
           </TableBody>
         </Table>

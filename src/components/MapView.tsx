@@ -27,7 +27,7 @@ export default function MapView({ onSpotSelect }: MapViewProps) {
   const [filterKey, setFilterKey] = useState<'N' | 'S' | 'All'>('All');
   const [filterSize, setFilterSize] = useState<'S' | 'M' | 'L' | 'All'>('All');
 
-  const initialSpotsRef = useRef<SpotType[]>([]);
+  // const initialSpotsRef = useRef<SpotType[]>([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -46,30 +46,28 @@ export default function MapView({ onSpotSelect }: MapViewProps) {
   const spotCounts = { S: 8, M: 7, L: 6 };
   const orders = storage.getOrders();
 
-  if (initialSpotsRef.current.length === 0) {
-    initialSpotsRef.current = sizeTypes.flatMap((size, y) => {
-      const [spotWidth, spotHeight] = sizeDimensions[size];
-      const totalSpots = spotCounts[size];
-      const totalSpacing = 400 - totalSpots * spotWidth;
-      const spacing = totalSpacing / (totalSpots + 1) + 50;
+  const initialSpotsRef: SpotType[] = sizeTypes.flatMap((size, y) => {
+    const [spotWidth, spotHeight] = sizeDimensions[size];
+    const totalSpots = spotCounts[size];
+    const totalSpacing = 400 - totalSpots * spotWidth;
+    const spacing = totalSpacing / (totalSpots + 1) + 50;
 
-      return Array.from({ length: totalSpots }, (_, x) => {
-        const name = `${size}-${x + 1}`;
-        return {
-          x: spacing + x * (spotWidth + spacing),
-          y: (y + 0.2) * (spotHeight + 30),
-          width: spotWidth,
-          height: spotHeight,
-          name,
-          occupied: orders.some((order) => order.spot === name),
-          size,
-        } satisfies SpotType;
-      });
+    return Array.from({ length: totalSpots }, (_, x) => {
+      const name = `${size}-${x + 1}`;
+      return {
+        x: spacing + x * (spotWidth + spacing),
+        y: (y + 0.2) * (spotHeight + 30),
+        width: spotWidth,
+        height: spotHeight,
+        name,
+        occupied: orders.some((order) => order.spot === name),
+        size,
+      } satisfies SpotType;
     });
-  }
+  });
 
   const allSpots = [
-    ...initialSpotsRef.current.map((spot) => {
+    ...initialSpotsRef.map((spot) => {
       const mergedName = `N-${spot.name}`;
       return {
         ...spot,
@@ -78,7 +76,7 @@ export default function MapView({ onSpotSelect }: MapViewProps) {
         occupied: orders.some((order) => order.spot === mergedName),
       };
     }),
-    ...initialSpotsRef.current.map((spot) => {
+    ...initialSpotsRef.map((spot) => {
       const mergedName = `S-${spot.name}`;
       return {
         ...spot,
@@ -96,7 +94,6 @@ export default function MapView({ onSpotSelect }: MapViewProps) {
       (filterSize === 'All' || spot.size === filterSize),
   );
 
-  console.log(allSpots[0]);
   return (
     <Box
       ref={containerRef}
@@ -143,7 +140,7 @@ export default function MapView({ onSpotSelect }: MapViewProps) {
 
       <Stage
         width={dimensions.width}
-        height={650}
+        height={dimensions.height}
         scaleX={zoomLevel}
         scaleY={zoomLevel}
         draggable
@@ -163,13 +160,7 @@ export default function MapView({ onSpotSelect }: MapViewProps) {
                   {filteredSpots
                     .filter((spot) => spot.key === areaKey)
                     .map((spot) => (
-                      <Group
-                        key={`${areaKey}-${spot.name}`}
-                        onClick={() =>
-                          !spot.occupied &&
-                          onSpotSelect?.(`${areaKey}-${spot.name}`)
-                        }
-                      >
+                      <Group key={`${areaKey}-${spot.name}`}>
                         <Rect
                           x={spot.x}
                           y={spot.y}
@@ -195,6 +186,14 @@ export default function MapView({ onSpotSelect }: MapViewProps) {
                             spot.occupied ? theme.palette.grey[700] : '#fff'
                           }
                           fontStyle="bold"
+                          onClick={() =>
+                            !spot.occupied &&
+                            onSpotSelect?.(`${areaKey}-${spot.name}`)
+                          }
+                          onTap={() =>
+                            !spot.occupied &&
+                            onSpotSelect?.(`${areaKey}-${spot.name}`)
+                          }
                         />
                       </Group>
                     ))}
